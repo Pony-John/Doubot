@@ -189,7 +189,6 @@ def on_error(ws, error):
 def on_close(ws):
     output("closed")
 
-
 def destroy_all():
     qs = {
         "id": getid(),

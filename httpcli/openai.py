@@ -37,11 +37,11 @@ def OpenaiServer(msg=None):
                 presence_penalty=0.0,
             )
             print("[response.choices]",response.choices)
-            msg = "来自ChatGPT回复：\n\r"
+            msg = "ChatGPT回复：\n\r"
             msg += response.choices[0].text
             # msg += "\n\rCreate by openai server"
             return msg
     # except Exception as e:
-    #     output(f"ERROR：{e.message}")
-    #     msg = e.message
+    # output(f"ERROR：{e.message}")
+    # msg = e.message
         return msg
