@@ -21,12 +21,15 @@ openai.api_key = openai_key
 
 
 def OpenaiServer(msg=None):
-        print("即将发送给ChatGPT的消息是：",msg)
-    # try:
+    print("即将发送给ChatGPT的消息是：",msg)
+    try:
         if msg is None:
             output(f'ERROR：msg is None')
+            msg = ""
         else:
+            start_time = time.time()
             print("正在请求openai.com……")
+            question = msg
             response = openai.Completion.create(
                 model="text-davinci-003",
                 prompt=str(msg),
@@ -36,12 +39,12 @@ def OpenaiServer(msg=None):
                 frequency_penalty=0.0,
                 presence_penalty=0.0,
             )
-            print("[response.choices]",response.choices)
-            msg = "ChatGPT回复：\n\r"
+            end_time = time.time()
+            msg ="Sent："+question[:9]+"…"+"\n"+"Cost："+str(int(end_time-start_time+2))+" seconds\n"+"Reply from ChatGPT：\n\r"
             msg += response.choices[0].text
             # msg += "\n\rCreate by openai server"
-            return msg
-    # except Exception as e:
-    # output(f"ERROR：{e.message}")
-    # msg = e.message
-        return msg
+            return msg 
+    except Exception as e:
+        output(f"ERROR：{e.message}")
+        msg = e.message
+    return msg

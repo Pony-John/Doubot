@@ -273,13 +273,21 @@ def handle_recv_msg(msgJson):
             msg = "Server is Online"
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
         elif keyword == "菜单" and roomid not in blacklist_room_id.split(","):
-            msg = '''\n\n1.以【豆豆】开头说一个需求\n→提问ChatGPT\n\n2.发送【早安】\n→获取一句早安心语\n\n3.发送【文案】\n→获取一句朋友圈文案\n\n4.发送【彩虹屁】\n→获取一句彩虹屁\n\n5.发送【舔狗日记】\n→获取一句舔狗日记\n
+            msg = '''\n\n1.以【豆豆】开头说一个需求\n  →提问ChatGPT\n\n2.发送【早安】\n  →早安心语\n\n3.发送【文案】\n  →获取一句朋友圈文案\n\n4.发送【彩虹屁】\n  →获取一句彩虹屁\n\n5.发送【舔狗日记】\n  →获取一句舔狗日记\n\n6.发送【查询XX座运势】，获取星座今日运势。
             '''
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
         #OpenAI关键词触发
-        elif keyword.startswith("豆豆"):
-            msg = OpenaiServer(keyword.replace("豆豆", "")).replace("\n\n", "")
-            ws.send(send_msg(msg, wxid=roomid))
+        elif keyword.startswith("豆豆"):  
+            keyword = keyword.replace("豆豆", "")
+            if keyword.startswith(" "):  
+                keyword = keyword.replace(" ", "")
+            elif keyword.startswith(","):  
+                keyword = keyword.replace(",", "")
+            elif keyword.startswith("，"):  
+                keyword = keyword.replace("，", "")
+            else : pass
+            msg = OpenaiServer(keyword).replace("\n\n", "")
+            ws.send(send_msg(msg, wxid=roomid))              
         elif "早安" == keyword:
             msg = get_morning_info()
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))    
@@ -292,6 +300,13 @@ def handle_recv_msg(msgJson):
         elif keyword == "舔狗日记":
             msg = get_lick_the_dog_diary()
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
+        elif (
+                "查询" in msgJson["content"]
+                and "运势" in msgJson["content"]
+                and roomid not in blacklist_room_id.split(",")
+        ):
+            msg = get_constellation_info(msgJson["content"].split("\u2005")[-1])
+            ws.send(send_msg(msg, wxid=roomid)) 
         # elif (
         #         keyword.startswith("md5解密")
         #         or keyword.startswith("md5")
@@ -324,13 +339,6 @@ def handle_recv_msg(msgJson):
         #     ws.send(send_msg(msg, wxid=roomid))
         # elif "黄历" == keyword:
         #     msg = get_today_zodiac()
-        #     ws.send(send_msg(msg, wxid=roomid))
-        # elif (
-        #         "查询" in msgJson["content"]
-        #         and "运势" in msgJson["content"]
-        #         and roomid not in blacklist_room_id.split(",")
-        # ):
-        #     msg = get_constellation_info(msgJson["content"].split("\u2005")[-1])
         #     ws.send(send_msg(msg, wxid=roomid))
         # elif "@疯狂星期四\u2005" in msgJson["content"] and keyword:
         #     msg = ai_reply(keyword)

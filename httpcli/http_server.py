@@ -257,6 +257,7 @@ def get_morning_info():
 # 获取星座运势
 def get_constellation_info(self):
     output("Get constellation info")
+    msg = "\n"
     try:
         constellation_list = re.findall("查询(.*?)运势", self)
         if len(constellation_list) > 0:
@@ -268,7 +269,7 @@ def get_constellation_info(self):
             if resp.status_code == 200 and resp.json()["code"] == 200:
                 msg = f"星座：{constellation_list[0]}"
                 for i in range(0, len(resp.json()["newslist"])):
-                    msg += f"\n{resp.json()['newslist'][i]['type']}：{resp.json()['newslist'][i]['content']}"
+                    msg = f"\n{resp.json()['newslist'][i]['type']}：{resp.json()['newslist'][i]['content']}"
             else:
                 msg = f"ERROR：接口请求请求异常，错误信息：{resp.json()['msg']}"
                 output(msg)
