@@ -1,4 +1,6 @@
 # WechatBot
+# 复刻自zhizhuoshuma
+
 一个基于PC版的微信机器人，采用hook的形式进行消息拦截，内存信息读取的形式获取通讯录，用户信息等
 
 感谢@cixingguangming55555开发的server端以及集成化的hook利用程序，本项目是基于@cixingguangming55555大佬的开源项目进行的二开（玩法很多我慢慢开发吧，就这样吧）
