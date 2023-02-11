@@ -5,6 +5,7 @@ import requests
 from httpcli.output import *
 import configparser
 import random
+import http.client, urllib, json
 from zhdate import ZhDate as lunar_date
 
 # 读取本地的配置文件
@@ -12,6 +13,7 @@ current_path = os.path.dirname(__file__)
 config_path = os.path.join(current_path, "../config/config.ini")
 config = configparser.ConfigParser()  # 类实例化
 config.read(config_path, encoding="utf-8")
+History_text_key = config.get('apiService',"History_text_key")
 History_url = config.get("apiService", "history_url")
 md5_url = config.get("apiService", "md5_url")
 dog_url = config.get("apiService", "dog_url")
@@ -29,8 +31,28 @@ salary_day = config.get("server", "salary_day")
 threatbook_key = config.get("apiService", "threatbook_key")
 threatbook_url = config.get("apiService", "threatbook_url")
 
+# 获取历史的今天事件（文字版 tianapi.com）
+def get_history_event_text():
+    output("Get History Today event (text)")
+    conn = http.client.HTTPSConnection('apis.tianapi.com')  #接口域名
+    # api需要的key、请求的日期
+    params = urllib.parse.urlencode({'key':History_text_key,'date':time.strftime('%m%d')})
+    headers = {'Content-type':'application/x-www-form-urlencoded'}
+    msg = '\n'
+    try:
+        conn.request('POST','/lishi/index',params,headers)
+        tianapi = conn.getresponse()
+        result = tianapi.read() # 读取数据
+        data = result.decode('utf-8') # 调整编码
+        dict_data = json.loads(data).get('result').get('list')  # 从json格式转换为dict格式，并读取数据
+        for event in dict_data:
+            msg += event.get('lsdate')+'\n'+event.get('title')+'\n\n'
+    except Exception as e:
+        msg = "历史上的今天接口调用出错，错误信息：{}".format(e)
+    return msg    
 
-# 获取历史的今天事件
+
+# 获取历史的今天事件（图片版）
 def get_history_event():
     output("Get History Today event")
     try:

@@ -25,24 +25,21 @@ def OpenaiServer(msg=None):
     try:
         if msg is None:
             output(f'ERROR：msg is None')
-            msg = ""
         else:
             start_time = time.time()
             print("正在请求openai.com……")
-            question = msg
             response = openai.Completion.create(
                 model="text-davinci-003",
                 prompt=str(msg),
                 temperature=0.6,
-                max_tokens=600,
+                max_tokens=4000, #最大长度：4000 tokens，即2000汉字
                 top_p=1.0,
                 frequency_penalty=0.0,
                 presence_penalty=0.0,
             )
             end_time = time.time()
-            msg ="Sent："+question[:9]+"…"+"\n"+"Cost："+str(int(end_time-start_time+2))+" seconds\n"+"Reply from ChatGPT：\n\r"
-            msg += response.choices[0].text
-            # msg += "\n\rCreate by openai server"
+            msg = response.choices[0].text
+            msg += '('+str(int(end_time-start_time+2))+" s"+')'
             return msg 
     except Exception as e:
         output(f"ERROR：{e.message}")

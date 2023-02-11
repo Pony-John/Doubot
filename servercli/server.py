@@ -16,6 +16,8 @@ config.read(config_path, encoding="utf-8")
 ip = config.get("server", "ip")
 port = config.get("server", "port")
 admin_id = config.get("server", "admin_id")
+menu = config.get("preset_reply","menu")
+help = config.get("preset_reply","help")
 video_list_room_id = config.get("server", "video_list_room_id")
 blacklist_room_id = config.get("server", "blacklist_room_id")
 
@@ -269,12 +271,17 @@ def handle_recv_msg(msgJson):
         senderid = msgJson["wxid"]  # 个人id
     nickname = get_member_nick(roomid, senderid)
     if roomid: # 这里是群消息的回复
-        if keyword == "test" and senderid in admin_id.split(","):
-            msg = "Server is Online"
+        if keyword == "豆豆在吗":
+            msg = "豆豆在的"
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
+        elif keyword == "test" and senderid in admin_id.split(","):
+            msg = "Server is Online"
+            ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))           
         elif keyword == "菜单" and roomid not in blacklist_room_id.split(","):
-            msg = '''\n\n1.以【豆豆】开头说一个需求\n  →提问ChatGPT\n\n2.发送【早安】\n  →早安心语\n\n3.发送【文案】\n  →获取一句朋友圈文案\n\n4.发送【彩虹屁】\n  →获取一句彩虹屁\n\n5.发送【舔狗日记】\n  →获取一句舔狗日记\n\n6.发送【查询XX座运势】，获取星座今日运势。
-            '''
+            msg = menu.replace(r'\n','\n')
+            ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
+        elif keyword == "帮助" and roomid not in blacklist_room_id.split(","):
+            msg = help.replace(r'\n','\n')
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
         #OpenAI关键词触发
         elif keyword.startswith("豆豆"):  
@@ -299,6 +306,9 @@ def handle_recv_msg(msgJson):
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
         elif keyword == "舔狗日记":
             msg = get_lick_the_dog_diary()
+            ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
+        elif keyword == "历史上的今天":
+            msg = get_history_event_text()
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
         elif (
                 "查询" in msgJson["content"]
