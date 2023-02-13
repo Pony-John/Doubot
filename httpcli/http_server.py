@@ -345,6 +345,15 @@ def get_time():
         return "晚上好"
 
 
+# 啥时放假
+def When_holidays():
+    holiday_date_dict = {'Qing_Ming':"2023-04-05",'Lao_Dong':"2023-04-29",'Duan_Wu':"2023-06-22",'Zhong_Qiu':"2023-09-29",'Guo_Qing':"2023-10-01",'Yuan_Dan':"2024-01-01",'Chu_Xi':"2024-02-09"}
+    week_list = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
+    time_now = time.strftime("%Y-%m-%d")
+    msg = f'\n【豆豆摸鱼办】提醒您：\n今天是{time.strftime("%m")}月{time.strftime("%d")}日 {week_list[int(datetime.date.today().isoweekday())-1]}\n════════════\n假期倒计时：\n🌿清明节：'+str(diff_day(time_now, holiday_date_dict.get('Qing_Ming')))+'天\n🛠劳动节：'+str(diff_day(time_now, holiday_date_dict.get('Lao_Dong')))+'天\n🚣‍♀️端午节：'+str(diff_day(time_now, holiday_date_dict.get('Duan_Wu')))+'天\n🥮中秋节：'+str(diff_day(time_now, holiday_date_dict.get('Zhong_Qiu')))+'天\n🇨🇳国庆节：'+str(diff_day(time_now, holiday_date_dict.get('Guo_Qing')))+'天\n💫元〇旦：'+str(diff_day(time_now, holiday_date_dict.get('Yuan_Dan')))+'天\n🏮除〇夕：'+str(diff_day(time_now, holiday_date_dict.get('Chu_Xi')))+'天\n════════════\n加油！打工人！'
+    return msg
+
+
 # 摸鱼日历
 def Touch_the_fish():
     # 获取每年除夕的阳历日期

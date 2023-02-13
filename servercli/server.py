@@ -307,6 +307,9 @@ def handle_recv_msg(msgJson):
         elif keyword == "舔狗日记":
             msg = get_lick_the_dog_diary()
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
+        elif keyword == "啥时放假":
+            msg = When_holidays()
+            ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))            
         elif keyword == "历史上的今天":
             msg = get_history_event_text()
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
@@ -356,7 +359,7 @@ def handle_recv_msg(msgJson):
         # elif (
         #         "摸鱼日历" == keyword or "摸鱼日记" == keyword
         # ) and roomid not in blacklist_room_id.split(","):
-        #     msg = Touch_the_fish()
+            msg = Touch_the_fish()
         #     ws.send(send_msg(msg, wxid=roomid))
         # elif "早报" == keyword or "安全新闻早报" == keyword:
         #     msg = get_freebuf_news()
