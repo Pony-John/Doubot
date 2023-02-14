@@ -31,6 +31,29 @@ salary_day = config.get("server", "salary_day")
 threatbook_key = config.get("apiService", "threatbook_key")
 threatbook_url = config.get("apiService", "threatbook_url")
 
+
+# 豆豆猜拳 石头剪刀布
+def Paper_Scissor_Rock(keyword=None):
+    # 创建一个剪刀石头布的列表
+    list_game = ["剪刀","石头","布"]
+    list_happy = ["😁嘿嘿","😆哈哈","🤣吼吼","🤪略略","😘么么"]
+    list_sad = ["😒哼！","😞唉……","😣啊！！","😭呜呜呜","😲啊？？","🤮Tu了","🤡我是消愁","🤬奈奈滴"]
+    # 采集玩家的出招
+    player = keyword
+    print('我出'+player)
+    # 电脑随机出招
+    computer = random.choice(list_game)
+    msg = '\n\n═══🐻 vs. 🧑🏻═══\n\n'
+    msg += "🔔豆豆出了"+computer+'\n'
+
+    if player == computer:
+        msg += "✳️平局，再来一次吧！"
+    elif (player == list_game[0] and computer == list_game[1]) or (player == list_game[1] and computer == list_game[2]) or (player == list_game[2] and computer == list_game[0]):
+        msg += f"✅豆豆赢了！\n\n豆豆说：{random.choice(list_happy)}"
+    else:
+        msg += f"✅你赢了！\n\n豆豆说：{random.choice(list_sad)}"
+    return msg
+
 # 获取历史的今天事件（文字版 tianapi.com）
 def get_history_event_text():
     output("Get History Today event (text)")

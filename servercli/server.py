@@ -283,6 +283,13 @@ def handle_recv_msg(msgJson):
         elif keyword == "帮助" and roomid not in blacklist_room_id.split(","):
             msg = help.replace(r'\n','\n')
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
+        elif keyword.startswith("豆豆猜拳"):
+            if keyword == "豆豆猜拳 我出石头" or keyword == "豆豆猜拳 我出剪刀" or keyword == "豆豆猜拳 我出布" or keyword == "豆豆猜拳，我出石头" or keyword == "豆豆猜拳，我出剪刀" or keyword == "豆豆猜拳，我出布":
+                keyword = keyword[7:] #切片，只要出招内容
+                msg = Paper_Scissor_Rock(keyword)
+            else:
+                msg = "\n\n═══🐻 vs. 🧑🏻═══\n\n要玩豆豆猜拳，请输入:\n\n豆豆猜拳 我出XX\n\n（XX为剪刀/石头/布）"
+            ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
         #OpenAI关键词触发
         elif keyword.startswith("豆豆"):  
             keyword = keyword.replace("豆豆", "")
@@ -294,10 +301,10 @@ def handle_recv_msg(msgJson):
                 keyword = keyword.replace("，", "")
             else : pass
             msg = OpenaiServer(keyword)
-            ws.send(send_msg(msg, wxid=roomid))              
+            ws.send(send_msg(msg, wxid=roomid))
         elif "早安" == keyword:
             msg = get_morning_info()
-            ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))    
+            ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
         elif keyword == "文案" and roomid not in blacklist_room_id.split(","):
             msg = get_chicken_soup()
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
@@ -309,7 +316,7 @@ def handle_recv_msg(msgJson):
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
         elif keyword == "啥时放假":
             msg = When_holidays()
-            ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))            
+            ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
         elif keyword == "历史上的今天":
             msg = get_history_event_text()
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
@@ -319,7 +326,7 @@ def handle_recv_msg(msgJson):
                 and roomid not in blacklist_room_id.split(",")
         ):
             msg = get_constellation_info(msgJson["content"].split("\u2005")[-1])
-            ws.send(send_msg(msg, wxid=roomid)) 
+            ws.send(send_msg(msg, wxid=roomid))       
         # elif (
         #         keyword.startswith("md5解密")
         #         or keyword.startswith("md5")
