@@ -293,7 +293,7 @@ def handle_recv_msg(msgJson):
             elif keyword.startswith("，"):  
                 keyword = keyword.replace("，", "")
             else : pass
-            msg = OpenaiServer(keyword).replace("\n\n", "")
+            msg = OpenaiServer(keyword)
             ws.send(send_msg(msg, wxid=roomid))              
         elif "早安" == keyword:
             msg = get_morning_info()

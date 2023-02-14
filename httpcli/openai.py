@@ -21,27 +21,34 @@ openai.api_key = openai_key
 
 
 def OpenaiServer(msg=None):
-    print("即将发送给ChatGPT的消息是：",msg)
+    original_msg = msg #记录提问内容
+    output(f"正在提问ChatGPT:{original_msg}")
     try:
         if msg is None:
             output(f'ERROR：msg is None')
         else:
             start_time = time.time()
             print("正在请求openai.com……")
+            print(str(msg))
             response = openai.Completion.create(
-                model="text-davinci-003",
+                model="text-davinci-003",#发生连续错误时，可以更换一下模型请求
+                # model="text-ada-001",
                 prompt=str(msg),
                 temperature=0.6,
-                max_tokens=4000, #最大长度：4000 tokens，即2000汉字
+                max_tokens=3600,
                 top_p=1.0,
                 frequency_penalty=0.0,
                 presence_penalty=0.0,
             )
             end_time = time.time()
-            msg = response.choices[0].text
-            msg += '('+str(int(end_time-start_time+2))+" s"+')'
-            return msg 
+            msg = response.choices[0].text  #ChatGPT的原始回复
+            msg += '('+str(int(end_time-start_time+2))+"s"+')'.replace("\n\n", "")  #添加耗时戳，删除连续换行
+            if msg.startswith("！"):    #删除异常出现的叹号和问号
+                msg = msg.replace("！", "")
+            elif msg.startswith("？"): 
+                msg = msg.replace("？", "")
+            return msg
     except Exception as e:
-        output(f"ERROR：{e.message}")
-        msg = e.message
-    return msg
+        output(f"OpenAI_ERROR：{e}")
+        msg = f'\n❌当前ChatGPT访问量过大！\n🕗请稍后重试。\n════════════\n✉️消息：“{original_msg}”\n════════════\n🚫错误：From<openai.com>:{str(e)}'
+        return msg
