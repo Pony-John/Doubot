@@ -1,5 +1,6 @@
 import json
 import warnings
+import pyshorteners as shr  #网址URL缩短
 
 import websocket
 from bs4 import BeautifulSoup
@@ -12,6 +13,7 @@ from httpcli.openai import *
 current_path = os.path.dirname(__file__)
 config_path = os.path.join(current_path, "../config/config.ini")
 config = configparser.ConfigParser()  # 类实例化
+shortener = shr.Shortener() # 类实例化（网址URL缩短）
 config.read(config_path, encoding="utf-8")
 ip = config.get("server", "ip")
 port = config.get("server", "port")
@@ -203,9 +205,9 @@ def destroy_all():
 
 # 消息发送函数
 def send_msg(msg, wxid="null", roomid=None, nickname="null"):
-    if ".jpg" in msg or ".png" in msg:
-        msg_type = PIC_MSG
-    elif roomid:
+    # if ".jpg" in msg or ".png" in msg:
+    #     msg_type = PIC_MSG
+    if roomid:
         msg_type = AT_MSG
     else:
         msg_type = TXT_MSG
@@ -292,18 +294,28 @@ def handle_recv_msg(msgJson):
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
         elif keyword.startswith("豆豆画图"):
             if len(keyword) <= 5:
-                msg = "\n\n═════🖌🐻🖌═════\n\n要使用豆豆画图，请发送:\n【豆豆画图 图片描述】例如：\n豆豆画图 一只猫在草原上骑车\n\nPowered by\n©️ DALL·E·2 @openai.com"
+                msg = "\n\n═════🖌🐻🖌═════\n\n🔲1.使用方法\n发送：[豆豆画图 图片描述]\n举例：\n▫️豆豆画图 一只柴犬正在微笑\n▫️豆豆画图 猫站在长城上\n▫️豆豆画图 rainy city,cyberpunk style,mainly in pink\n\n🔲2.图片清晰度\n▫️默认图片清晰度为64像素，可以在图片描述中附加[size=512]或[size=1024]分别获得512像素与1024像素的清晰度。\n▫️64像素直接返回图片，512像素与1024像素返回储存有图片的网址URL（有效时间1小时）\n\n💡Powered by\n©️ DALL·E·2 @openai.com"
                 ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
             else:
-                keyword = keyword[5:]   # 切片，只要图片描述
-                img_url = DALLE2_Server(keyword)    # 从DALLE2获取图片url
-                print(img_url)
-                if '错误' in img_url:
-                    ws.send(send_msg(img_url, roomid=roomid, wxid=senderid, nickname=nickname)) #发送错误信息
+                keyword = keyword[5:]   #切片，只要图片描述
+                if "size=512" in keyword:
+                    keyword_img_size = "512x512"
+                elif "size=1024" in keyword:
+                    keyword_img_size = "1024x1024"
                 else:
-                    msg = Imamge_download(img_url,api_token=None)    # 下载图片
-                    send_img_room(msg, roomid) # 发送图片
-        # OpenAI关键词触发
+                    keyword_img_size = "256x256"    #默认大小为256像素
+                img_url = DALLE2_Server(keyword,keyword_img_size)    #从DALLE2获取图片url
+                print(img_url)
+                if '错误' in img_url or keyword_img_size == "512x512" or keyword_img_size == "1024x1024":
+                    if '错误' not in img_url:
+                        msg = f'\n\n═════🖌🐻🖌═════\n\n📝描述：{keyword}\n\n⏳URL：网址仅可保留1小时！\n\n{img_url}'
+                    else:
+                        msg = img_url
+                    ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname)) #发送错误信息，或由于尺寸大仅发送url
+                else:
+                    msg = Imamge_download(img_url,api_token=None)    #下载图片
+                    send_img_room(msg, roomid) #发送图片
+        #OpenAI关键词触发
         elif keyword.startswith("豆豆"):  
             keyword = keyword.replace("豆豆", "")
             if keyword.startswith(" "):  

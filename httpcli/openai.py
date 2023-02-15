@@ -20,13 +20,13 @@ openai_key = config.get("apiService", "openai_key")
 openai.api_key = openai_key
 
 # DALL·E·2 接口
-def DALLE2_Server(img_description):
+def DALLE2_Server(img_description,img_size):
     output(f"正在请求DALL·E·2:{img_description}")
     try:
         response = openai.Image.create(
             prompt = img_description,
             n = 1,
-            size = "1024x1024",
+            size = img_size,
         )
         res_DALLE2 = response['data'][0]['url']
         return res_DALLE2
