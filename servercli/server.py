@@ -203,7 +203,7 @@ def destroy_all():
 
 # 消息发送函数
 def send_msg(msg, wxid="null", roomid=None, nickname="null"):
-    if "jpg" in msg:
+    if ".jpg" in msg or ".png" in msg:
         msg_type = PIC_MSG
     elif roomid:
         msg_type = AT_MSG
@@ -288,9 +288,22 @@ def handle_recv_msg(msgJson):
                 keyword = keyword[7:] #切片，只要出招内容
                 msg = Paper_Scissor_Rock(keyword)
             else:
-                msg = "\n\n═══🐻 vs. 🧑🏻═══\n\n要玩豆豆猜拳，请输入:\n\n豆豆猜拳 我出XX\n\n（XX为剪刀/石头/布）"
+                msg = "\n\n═══🐻 vs. 🧑🏻═══\n\n要玩豆豆猜拳，请发送:\n【豆豆猜拳 我出XX】\n（XX为剪刀/石头/布）"
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
-        #OpenAI关键词触发
+        elif keyword.startswith("豆豆画图"):
+            if len(keyword) <= 5:
+                msg = "\n\n═════🖌🐻🖌═════\n\n要使用豆豆画图，请发送:\n【豆豆画图 图片描述】例如：\n豆豆画图 一只猫在草原上骑车\n\nPowered by\n©️ DALL·E·2 @openai.com"
+                ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
+            else:
+                keyword = keyword[5:]   # 切片，只要图片描述
+                img_url = DALLE2_Server(keyword)    # 从DALLE2获取图片url
+                print(img_url)
+                if '错误' in img_url:
+                    ws.send(send_msg(img_url, roomid=roomid, wxid=senderid, nickname=nickname)) #发送错误信息
+                else:
+                    msg = Imamge_download(img_url,api_token=None)    # 下载图片
+                    send_img_room(msg, roomid) # 发送图片
+        # OpenAI关键词触发
         elif keyword.startswith("豆豆"):  
             keyword = keyword.replace("豆豆", "")
             if keyword.startswith(" "):  
@@ -305,6 +318,9 @@ def handle_recv_msg(msgJson):
         elif "早安" == keyword:
             msg = get_morning_info()
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
+        elif "发图" == keyword:
+            msg = "D:\\img.png"
+            ws.send(send_img_room(msg, roomid))
         elif keyword == "文案" and roomid not in blacklist_room_id.split(","):
             msg = get_chicken_soup()
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
@@ -366,7 +382,7 @@ def handle_recv_msg(msgJson):
         # elif (
         #         "摸鱼日历" == keyword or "摸鱼日记" == keyword
         # ) and roomid not in blacklist_room_id.split(","):
-            msg = Touch_the_fish()
+        #     msg = Touch_the_fish()
         #     ws.send(send_msg(msg, wxid=roomid))
         # elif "早报" == keyword or "安全新闻早报" == keyword:
         #     msg = get_freebuf_news()

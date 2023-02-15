@@ -19,10 +19,26 @@ config.read(config_path, encoding="utf-8")
 openai_key = config.get("apiService", "openai_key")
 openai.api_key = openai_key
 
+# DALL·E·2 接口
+def DALLE2_Server(img_description):
+    output(f"正在请求DALL·E·2:{img_description}")
+    try:
+        response = openai.Image.create(
+            prompt = img_description,
+            n = 1,
+            size = "1024x1024",
+        )
+        res_DALLE2 = response['data'][0]['url']
+        return res_DALLE2
+    except Exception as e:
+        output(f"OpenAI_ERROR：{e}")
+        res_DALLE2 = f'\n❌请求DALL·E·2失败！\n════════════\n✉️消息：“{img_description}”\n════════════\n🚫错误：From<openai.com>:{str(e)}'
+        return res_DALLE2
 
+# GPT接口
 def OpenaiServer(msg=None):
     original_msg = msg #记录提问内容
-    output(f"正在提问ChatGPT:{original_msg}")
+    output(f"正在请求ChatGPT:{original_msg}")
     try:
         if msg is None:
             output(f'ERROR：msg is None')

@@ -32,6 +32,24 @@ threatbook_key = config.get("apiService", "threatbook_key")
 threatbook_url = config.get("apiService", "threatbook_url")
 
 
+# 图片下载
+def Imamge_download(img_url, api_token):
+    header={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36'
+    }# 设置http header
+    request = urllib.request.Request(img_url, headers=header)
+    try:
+        response = urllib.request.urlopen(request)
+        filename = "C:\\Users\\Administrator\\Documents\\DALLE2\\DALLE2img.png"
+        # filename = "D:\\DALLE2img.png"
+        if (response.getcode() == 200):
+            with open(filename, "wb") as f:
+                f.write(response.read()) # 将内容写入图片
+            output(f'图片 {filename} 下载成功')
+            return filename
+    except Exception as e:
+        output(f'图片 {filename} 下载失败：{e}')
+        return "failed"
+
 # 豆豆猜拳 石头剪刀布
 def Paper_Scissor_Rock(keyword=None):
     # 创建一个剪刀石头布的列表
