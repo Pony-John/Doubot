@@ -294,13 +294,15 @@ def handle_recv_msg(msgJson):
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
         elif keyword.startswith("豆豆画图"):
             if len(keyword) <= 5:
-                msg = "\n\n═════🖌🐻🖌═════\n\n🔲1.使用方法\n发送：[豆豆画图 图片描述]\n举例：\n▫️豆豆画图 一只柴犬正在微笑\n▫️豆豆画图 猫站在长城上\n▫️豆豆画图 rainy city,cyberpunk style,mainly in pink\n\n🔲2.图片清晰度\n▫️默认图片清晰度为64像素，可以在图片描述中附加[size=512]或[size=1024]分别获得512像素与1024像素的清晰度。\n▫️64像素直接返回图片，512像素与1024像素返回储存有图片的网址URL（有效时间1小时）\n\n💡Powered by\n©️ DALL·E·2 @openai.com"
+                msg = "\n\n═════🖌🐻🖌═════\n\n🔲1.使用方法\n发送：[豆豆画图 图片描述]\n举例：\n▫️豆豆画图 一只柴犬正在微笑\n▫️豆豆画图 猫站在长城上\n▫️豆豆画图 rainy city,cyberpunk style,mainly in pink\n\n🔲2.图片清晰度\n▫️默认图片清晰度为256像素，可以在图片描述中附加[size=512]或[size=1024]分别获得512像素与1024像素的清晰度。\n▫️256像素直接返回图片，512像素与1024像素返回储存有图片的网址URL（有效时间1小时）\n\n💡Powered by\n©️ DALL·E·2 @openai.com"
                 ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
             else:
                 keyword = keyword[5:]   #切片，只要图片描述
                 if "size=512" in keyword:
+                    keyword = keyword.replace("size=512","")
                     keyword_img_size = "512x512"
                 elif "size=1024" in keyword:
+                    keyword = keyword.replace("size=1024","")
                     keyword_img_size = "1024x1024"
                 else:
                     keyword_img_size = "256x256"    #默认大小为256像素
