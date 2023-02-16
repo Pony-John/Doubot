@@ -1,3 +1,4 @@
+websocket-client-py3
 beautifulsoup4==4.11.1
 feedparser==6.0.10
 pyfiglet==0.8.post1
@@ -7,3 +8,4 @@ termcolor==1.1.0
 websocket_client==1.4.1
 zhdate==0.1
 lxml==4.9.1
+openai==0.26.5
