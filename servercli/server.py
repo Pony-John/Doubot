@@ -292,6 +292,12 @@ def handle_recv_msg(msgJson):
             else:
                 msg = "\n\n═══🐻 vs. 🧑🏻═══\n\n要玩豆豆猜拳，请发送:\n【豆豆猜拳 我出XX】\n（XX为剪刀/石头/布）"
             ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
+        elif '豆豆' in keyword and '彩票' in keyword:
+            msg ="\n\n════💰🐻💰════\n\n要玩豆豆彩票\n请发送:【豆豆大乐透】\n或发送：【豆豆双色球】"
+            ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
+        elif '豆豆大乐透' == keyword or '豆豆双色球' == keyword:
+            msg = Dou_Lottery(keyword)
+            ws.send(send_msg(msg, roomid=roomid, wxid=senderid, nickname=nickname))
         elif keyword.startswith("豆豆画图"):
             if len(keyword) <= 5:
                 msg = "\n\n═════🖌🐻🖌═════\n\n🔲1.使用方法\n发送：[豆豆画图 图片描述]\n举例：\n▫️豆豆画图 一只柴犬正在微笑\n▫️豆豆画图 猫站在长城上\n▫️豆豆画图 rainy city,cyberpunk style,mainly in pink\n\n🔲2.图片清晰度\n▫️默认图片清晰度为256像素，可以在图片描述中附加[size=512]或[size=1024]分别获得512像素与1024像素的清晰度。\n▫️256像素直接返回图片，512像素与1024像素返回储存有图片的网址URL（有效时间1小时）\n\n💡Powered by\n©️ DALL·E·2 @openai.com"
@@ -430,9 +436,9 @@ def handle_recv_msg(msgJson):
             msg = "\n\n1.以【豆豆】开头说一个需求\n→提问ChatGPT\n\n2.发送【早安】\n→获取一句早安心语\n\n3.发送【文案】\n→获取一句朋友圈文案\n\n4.发送【彩虹屁】\n→获取一句彩虹屁\n\n5.发送【舔狗日记】\n→获取一句舔狗日记\n"
             ws.send(send_msg(msg, senderid))
         #OpenAI关键词触发
-        elif keyword.startswith("豆豆"):
-            msg = OpenaiServer(keyword.replace("豆豆", "")).replace("\n\n", "")
-            ws.send(send_msg(msg, senderid))
+        # elif keyword.startswith("豆豆"):
+        #     msg = OpenaiServer(keyword.replace("豆豆", "")).replace("\n\n", "")
+        #     ws.send(send_msg(msg, senderid))
         elif "早安" == keyword:
             msg = get_morning_info()
             ws.send(send_msg(msg, senderid))    
@@ -444,6 +450,9 @@ def handle_recv_msg(msgJson):
             ws.send(send_msg(msg, senderid))
         elif keyword == "舔狗日记":
             msg = get_lick_the_dog_diary()
+            ws.send(send_msg(msg, senderid))
+        else:
+            msg = OpenaiServer(keyword).replace("\n\n", "")
             ws.send(send_msg(msg, senderid))
         # elif keyword == "今日新闻":
         #     msg = get_history_event()
@@ -471,9 +480,11 @@ def handle_recv_msg(msgJson):
         # elif "早报" == keyword or "安全新闻早报" == keyword:
         #     msg = get_freebuf_news()
         #     ws.send(send_msg(msg, wxid=senderid))
+        '''
         else:
             msg = ai_reply(keyword)
             ws.send(send_msg(msg, wxid=senderid))
+        '''
 
 
 def on_message(ws, message):
